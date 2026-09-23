@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <!-- Metadatos y estilos autocontenidos para impresion en formato A4. -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CV - {{ profile.name }}</title>
+    <style>
+        :root {
+            color-scheme: light;
+            --ink: #172033;
+            --muted: #526078;
+            --line: #d7deea;
+            --accent: #176b87;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            background: #eef2f7;
+            color: var(--ink);
+            font-family: "Segoe UI", Arial, sans-serif;
+            font-size: 9.5pt;
+            line-height: 1.35;
+        }
+
+        .page {
+            width: min(100%, 210mm);
+            min-height: 297mm;
+            margin: 1rem auto;
+            padding: 14mm 15mm;
+            background: #fff;
+            box-shadow: 0 8px 28px rgba(25, 37, 60, 0.14);
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            gap: 1.5rem;
+            padding-bottom: 0.8rem;
+            border-bottom: 3px solid var(--accent);
+        }
+
+        h1, h2, h3, p { margin: 0; }
+        h1 { font-size: 23pt; line-height: 1.05; }
+        header h2 { margin-top: 0.35rem; color: var(--accent); font-size: 11pt; font-weight: 600; }
+        .contact { color: var(--muted); text-align: right; font-size: 8.5pt; }
+        .contact p + p { margin-top: 0.2rem; }
+        .summary { margin-top: 0.75rem; color: var(--muted); font-size: 9.5pt; }
+        section { margin-top: 0.8rem; }
+        .section-title { margin-bottom: 0.38rem; padding-bottom: 0.2rem; border-bottom: 1px solid var(--line); color: var(--accent); font-size: 10.5pt; text-transform: uppercase; letter-spacing: 0.08em; }
+        .experience { margin-bottom: 0.48rem; }
+        .experience-head { display: flex; justify-content: space-between; gap: 1rem; }
+        .experience h3, .project h3 { font-size: 9.5pt; }
+        .period { color: var(--muted); white-space: nowrap; }
+        ul { margin: 0.2rem 0 0; padding-left: 1rem; }
+        li { margin-bottom: 0.1rem; }
+        .projects { display: grid; grid-template-columns: 1fr 1fr; gap: 0.42rem 1rem; }
+        .project p { margin-top: 0.12rem; color: var(--muted); }
+        .project a { color: var(--accent); font-size: 8pt; overflow-wrap: anywhere; }
+        .skills { display: grid; grid-template-columns: 1fr 1fr; gap: 0.3rem 1rem; }
+        .skill-category h3 { margin-bottom: 0.14rem; font-size: 9pt; }
+        .skill-tags { display: flex; flex-wrap: wrap; gap: 0.22rem 0.35rem; }
+        .skill-tag { display: inline-block; padding: 0.12rem 0.35rem; border: 1px solid var(--line); border-radius: 0.2rem; color: var(--muted); font-size: 8.3pt; }
+
+        @media (max-width: 700px) {
+            .page { min-height: auto; margin: 0; padding: 1.25rem; }
+            header, .experience-head { display: block; }
+            .contact { margin-top: 0.6rem; text-align: left; }
+            .period { display: block; }
+            .projects, .skills { grid-template-columns: 1fr; }
+        }
+
+        @media print {
+            @page { size: A4; margin: 0; }
+            body { background: #fff; font-size: 8.7pt; }
+            .page { width: 210mm; min-height: 297mm; margin: 0; padding: 11mm 13mm; box-shadow: none; }
+            a { color: inherit; text-decoration: none; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Hoja principal del CV imprimible. -->
+    <main class="page">
+        <!-- Identidad profesional y datos de contacto. -->
+        <header>
+            <div>
+                <h1>{{ profile.name }}</h1>
+                <h2>{{ profile.title }}</h2>
+            </div>
+            <div class="contact">
+                <p>{{ profile.email }}</p>
+                <p>{{ profile.location }}</p>
+            </div>
+        </header>
+
+        <!-- Resumen profesional. -->
+        <p class="summary">{{ profile.focus }}</p>
+
+        <!-- Experiencia laboral y logros asociados. -->
+        <section>
+            <h2 class="section-title">Experiencia</h2>
+            {% for experience in profile.experiences %}
+            <article class="experience">
+                <div class="experience-head">
+                    <h3>{{ experience.company }} · {{ experience.role }}</h3>
+                    <span class="period">{{ experience.period }}</span>
+                </div>
+                <ul>
+                    {% for achievement in experience.achievements %}
+                    <li>{{ achievement }}</li>
+                    {% endfor %}
+                </ul>
+            </article>
+            {% endfor %}
+        </section>
+
+        <!-- Proyectos profesionales con sus tecnologias y repositorios. -->
+        <section>
+            <h2 class="section-title">Proyectos</h2>
+            <div class="projects">
+                {% for project in profile.projects %}
+                <article class="project">
+                    <h3>{{ project.title }}</h3>
+                    <p>{{ project.tech }}</p>
+                    <a href="{{ project.link }}">{{ project.link }}</a>
+                </article>
+                {% endfor %}
+            </div>
+        </section>
+
+        <!-- Habilidades agrupadas por categoria. -->
+        <section>
+            <h2 class="section-title">Habilidades</h2>
+            <div class="skills">
+                {% for category in profile.skills %}
+                <article class="skill-category">
+                    <h3>{{ category.category }}</h3>
+                    {% for skill in category["items"] %}
+                    <span class="skill-tag">{{ skill }}</span>
+                    {% endfor %}
+                </article>
+                {% endfor %}
+            </div>
+        </section>
+    </main>
+</body>
+</html>

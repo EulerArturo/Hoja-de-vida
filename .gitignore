@@ -1,0 +1,47 @@
+.env
+# Secretos y configuracion local
+.env
+.env.*
+!.env.example
+
+# Entornos y caches de Python
+.venv/
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Analisis, resultados temporales y archivos de trabajo
+analysis_frames/
+analysis_transition/
+fase*_resultado.txt
+actualizacion_perfil_resultado.txt
+informe_ultimas_4_solicitudes.txt
+*.log
+*.tmp
+*.temp
+*.bak
+
+# Multimedia y archivos comprimidos generados localmente
+*.mp4
+*.mov
+*.avi
+*.mkv
+*.webm
+*.m4v
+*.flv
+*.wmv
+*.mp3
+*.wav
+*.aac
+*.ogg
+*.zip
+*.rar
+*.7z
+*.tar
+*.gz
