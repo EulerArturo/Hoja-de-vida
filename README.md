@@ -7,7 +7,7 @@ La aplicacion utiliza Flask para el backend, Jinja2 para las vistas y Tailwind C
 ## Caracteristicas clave
 
 - Arquitectura modular con rutas Flask, plantillas Jinja2, datos de perfil separados y recursos frontend independientes.
-- Formulario de contacto con validacion cliente/servidor, envio SMTP mediante Flask-Mail, honeypot anti-spam y rate limiting con Flask-Limiter.
+- Formulario de contacto con validacion cliente/servidor, envio mediante la API HTTPS de Resend, honeypot anti-spam y rate limiting con Flask-Limiter.
 - Respuestas JSON y formulario HTML tradicional para `POST /contact`.
 - Visualizacion del CV PDF existente mediante `/cv/view`.
 - Descarga del PDF mediante `/cv/download`.
@@ -20,12 +20,12 @@ La aplicacion utiliza Flask para el backend, Jinja2 para las vistas y Tailwind C
 - Python 3.11+
 - Flask 3.1
 - Jinja2
-- Flask-Mail
+- Resend Python SDK
 - Flask-Limiter
 - Gunicorn
 - HTML5, CSS3 y JavaScript ES6+
 - Tailwind CSS mediante CDN y estilos CSS propios
-- SMTP para el formulario de contacto
+- API REST HTTPS de Resend para el formulario de contacto
 
 ## Estructura principal
 
@@ -72,7 +72,7 @@ Requisitos: Python 3.11 o superior.
    Copy-Item .env.example .env
    ```
 
-5. Para ejecutar pruebas locales sin enviar correos reales, establece `MAIL_SUPPRESS_SEND=true`.
+5. Para ejecutar pruebas locales, define una clave `RESEND_API_KEY` valida solo si deseas enviar correos. Sin esa variable, el formulario respondera con un error controlado `503`.
 
 6. Inicia la aplicacion:
 
@@ -91,22 +91,15 @@ Las variables se cargan desde `.env` en desarrollo y desde la configuracion del 
 | `SECRET_KEY` | Si | Clave aleatoria de Flask; en produccion debe tener al menos 32 caracteres. |
 | `FLASK_ENV` | Recomendada | Usa `production` para activar validaciones de produccion. |
 | `FLASK_DEBUG` | No | Activa el modo debug local; debe ser `false` en produccion. |
-| `MAIL_SERVER` | No | Servidor SMTP, por defecto `smtp.gmail.com`. |
-| `MAIL_PORT` | No | Puerto SMTP, normalmente `587`. |
-| `MAIL_USE_TLS` | No | Activa TLS; normalmente `true`. |
-| `MAIL_USE_SSL` | No | Activa SSL; normalmente `false` si se usa TLS. |
-| `MAIL_USERNAME` | Si para contacto | Usuario o correo de la cuenta SMTP. |
-| `MAIL_PASSWORD` | Si para contacto | Clave SMTP; con Gmail se recomienda una clave de aplicacion. |
-| `MAIL_DEFAULT_SENDER` | Si para contacto | Remitente utilizado por Flask-Mail. |
+| `RESEND_API_KEY` | Si para contacto | Clave privada del SDK Resend. Nunca la publiques en el repositorio. |
 | `RECIPIENT_EMAIL` | Si para contacto | Destinatario de las propuestas recibidas. |
 | `PUBLIC_EMAIL` | No | Correo mostrado publicamente en el portafolio. |
 | `CONTACT_SUBJECT_PREFIX` | No | Prefijo de los asuntos del formulario. |
 | `CV_FILE_PATH` | No | Ruta del PDF del CV; por defecto `hoja de vida 2026a.pdf`. |
 | `CV_DOWNLOAD_NAME` | No | Nombre del archivo al descargar el CV. |
-| `MAIL_SUPPRESS_SEND` | No | Usa `true` para evitar envios durante pruebas locales. |
 | `LOG_LEVEL` | No | Nivel de logging, por defecto `INFO`. |
 
-No publiques `.env`, credenciales SMTP ni claves privadas. El archivo `.env.example` solo contiene valores de ejemplo.
+No publiques `.env`, claves Resend ni otras credenciales privadas. El archivo `.env.example` solo contiene valores de ejemplo.
 
 ## Despliegue en Render
 
@@ -116,10 +109,10 @@ El repositorio incluye `render.yaml` y `Procfile`. Render puede crear el servici
 2. Selecciona la configuracion definida en `render.yaml` o crea un Web Service con entorno Python.
 3. Usa `pip install -r requirements.txt` como comando de construccion.
 4. Usa `gunicorn app:app` como comando de inicio.
-5. Define en Render las variables SMTP secretas: `MAIL_USERNAME`, `MAIL_PASSWORD` y `MAIL_DEFAULT_SENDER`.
+5. Define en Render la variable secreta `RESEND_API_KEY`.
 6. Verifica `SECRET_KEY`, `RECIPIENT_EMAIL`, `PUBLIC_EMAIL` y `CV_FILE_PATH`.
 
-`render.yaml` genera automaticamente `SECRET_KEY`, configura Gunicorn y establece los valores publicos no secretos. Las credenciales SMTP deben añadirse como variables secretas en Render.
+`render.yaml` genera automaticamente `SECRET_KEY`, configura Gunicorn y establece los valores publicos no secretos. `RESEND_API_KEY` debe añadirse como variable secreta en Render.
 
 Para despliegues con varios workers o reinicios, configura un almacenamiento persistente para Flask-Limiter, como Redis, en lugar del almacenamiento en memoria predeterminado.
 

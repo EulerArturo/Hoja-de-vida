@@ -10,14 +10,8 @@ services:
         generateValue: true
       - key: FLASK_ENV
         value: production
-      - key: MAIL_SERVER
-        value: smtp.gmail.com
-      - key: MAIL_PORT
-        value: "587"
-      - key: MAIL_USE_TLS
-        value: "true"
-      - key: MAIL_USE_SSL
-        value: "false"
+      - key: RESEND_API_KEY
+        sync: false
       - key: RECIPIENT_EMAIL
         value: euler.chapid.it@gmail.com
       - key: PUBLIC_EMAIL

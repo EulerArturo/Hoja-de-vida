@@ -1,6 +1,7 @@
 """Aplicacion Flask para el portafolio profesional y formulario de contacto.
 
-El modulo configura Flask-Mail y Flask-Limiter, registra las rutas publicas y
+El modulo configura Resend para el envio de correo mediante API HTTPS y
+Flask-Limiter para proteger el formulario, registra las rutas publicas y
 expone las vistas del portafolio, el formulario de contacto y el CV.
 """
 
@@ -11,16 +12,15 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 from flask import Flask, abort, flash, jsonify, redirect, render_template, request, send_file, url_for
-from flask_mail import Mail, Message
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
+import resend
 
 from data.profile import PROFILE
 
 
 load_dotenv()
 
-mail = Mail()
 limiter = Limiter(key_func=get_remote_address, default_limits=[])
 logger = logging.getLogger(__name__)
 
@@ -79,7 +79,6 @@ def create_app() -> Flask:
     Raises:
         RuntimeError: Si el entorno es produccion y ``SECRET_KEY`` no es
             suficientemente segura.
-        ValueError: Si una variable numerica de configuracion SMTP no es valida.
     """
 
     app = Flask(__name__)
@@ -93,18 +92,9 @@ def create_app() -> Flask:
 
     app.config.update(
         SECRET_KEY=secret_key,
-        MAIL_SERVER=os.getenv("MAIL_SERVER", "smtp.gmail.com"),
-        MAIL_PORT=int(os.getenv("MAIL_PORT", "587")),
-        MAIL_USE_TLS=os.getenv("MAIL_USE_TLS", "true").lower() == "true",
-        MAIL_USE_SSL=os.getenv("MAIL_USE_SSL", "false").lower() == "true",
-        MAIL_USERNAME=os.getenv("MAIL_USERNAME", ""),
-        MAIL_PASSWORD=os.getenv("MAIL_PASSWORD", ""),
-        MAIL_DEFAULT_SENDER=os.getenv("MAIL_DEFAULT_SENDER", os.getenv("MAIL_USERNAME", "")),
-        MAIL_SUPPRESS_SEND=os.getenv("MAIL_SUPPRESS_SEND", "false").lower() == "true",
         MAX_CONTENT_LENGTH=2 * 1024 * 1024,
     )
 
-    mail.init_app(app)
     limiter.init_app(app)
     configure_logging(app)
     register_routes(app)
@@ -203,26 +193,20 @@ def validate_contact_payload(payload: dict) -> dict:
 
 
 def mail_configuration_error(app: Flask) -> str | None:
-    """Detecta si faltan credenciales necesarias para SMTP.
+    """Detecta si falta la clave necesaria para Resend.
 
     Args:
-        app: Instancia Flask con la configuracion de correo cargada.
+        app: Instancia Flask asociada a la solicitud de contacto. Se conserva
+            para mantener la firma de la funcion y no se utiliza para leer
+            credenciales.
 
     Returns:
-        str | None: Mensaje descriptivo cuando faltan credenciales; ``None``
-            si el servicio esta configurado o los envios estan suprimidos.
+        str | None: Mensaje descriptivo cuando falta ``RESEND_API_KEY``;
+            ``None`` si la clave esta configurada.
     """
 
-    if app.config.get("MAIL_SUPPRESS_SEND"):
-        return None
-
-    missing = [
-        setting
-        for setting in ("MAIL_USERNAME", "MAIL_PASSWORD", "MAIL_DEFAULT_SENDER")
-        if not app.config.get(setting)
-    ]
-    if missing:
-        return "El servicio de correo no esta configurado. Define las credenciales SMTP en el archivo .env."
+    if not os.getenv("RESEND_API_KEY"):
+        return "El servicio de correo no esta configurado. Define RESEND_API_KEY en el archivo .env."
 
     return None
 
@@ -257,8 +241,8 @@ def register_routes(app: Flask) -> None:
                 formulario para solicitudes HTML.
 
         Raises:
-            SMTPException: La excepcion del transporte se captura y se traduce
-                en una respuesta controlada de servicio no disponible.
+            Exception: Las excepciones del SDK Resend se registran y se
+                traducen en una respuesta controlada de servicio no disponible.
         """
 
         payload = request.get_json(silent=True) if request.is_json else request.form.to_dict()
@@ -296,19 +280,23 @@ def register_routes(app: Flask) -> None:
             f"{data['message']}\n"
         )
 
+        resend.api_key = os.getenv("RESEND_API_KEY")
+
         try:
-            msg = Message(
-                subject=f"{prefix} {subject}",
-                recipients=[recipient],
-                body=body,
-                reply_to=data["email"],
+            resend.Emails.send(
+                {
+                    "from": "Portafolio Web <onboarding@resend.dev>",
+                    "to": [recipient],
+                    "subject": f"{prefix} {subject}",
+                    "reply_to": data["email"],
+                    "text": body,
+                }
             )
-            mail.send(msg)
         except Exception as exc:  # pragma: no cover
-            logger.exception("Error enviando correo de contacto: %s", exc)
+            logger.exception("Error enviando correo de contacto mediante Resend: %s", exc)
             if request.is_json:
-                return jsonify({"ok": False, "message": "No se pudo enviar el mensaje en este momento. Revisa la configuracion SMTP."}), 503
-            flash("No se pudo enviar el mensaje. Revisa la configuracion SMTP e intenta nuevamente.", "error")
+                return jsonify({"ok": False, "message": "No se pudo enviar el mensaje en este momento. Revisa la configuracion de Resend."}), 503
+            flash("No se pudo enviar el mensaje. Revisa la configuracion de Resend e intenta nuevamente.", "error")
             return redirect(url_for("index") + "#contact")
 
         if request.is_json:
