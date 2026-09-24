@@ -11,7 +11,7 @@ PROFILE = {
     "focus": "Analista de Datos y Automatización orientado a optimizar procesos, integrar fuentes de información y desarrollar herramientas dinámicas. Trabajo con Python y Pandas, SQL/MySQL, Excel Avanzado, scripts de automatización, CommCare y flujos con Power Automate y Power Apps.",
     "email": "euler.chapid.it@gmail.com",
     "location": "Ipiales, Nariño, Colombia",
-    "telefono": "+57 300 136 0549",
+    "phone": "+57 300 136 0549",
     "residencia": "Disponible para cambio de residencia",
     "availability_status": True,
     "availability_text": "Disponible para vacantes IT y proyectos de automatización",
@@ -89,7 +89,7 @@ PROFILE = {
     ],
     "projects": [
         {
-            "title": "Google Sheets Active Assets Mapping Tool",
+            "title": "Herramienta de Mapeo de Activos de Hardware",
             "tech": "Google Apps Script · JavaScript · Google Drive API · Google Sheets API",
             "description": "Herramienta web para el mapeo, registro y trazabilidad de activos de hardware en tiempo real. Integra control de concurrencia (LockService), generación de hojas de vida técnicas, control de responsables de equipos y módulo de carga e inspección de evidencias multimedia en Google Drive.",
             "link": "https://github.com/EulerArturo/Google-Sheets-Active-Assets-Mapping-Tool"
@@ -101,7 +101,7 @@ PROFILE = {
             "link": "https://github.com/EulerArturo/Hoja_de_vida_pcs"
         },
         {
-            "title": "Sistema de Gestión de Órdenes Ópticas",
+            "title": "Sistema de Gestión de Órdenes Óptica",
             "tech": "Google Apps Script · JS ES6+ · Google Sheets API · HTML5 · CSS3",
             "description": "Aplicación web integral para digitalizar, registrar y controlar órdenes en laboratorios ópticos. Incluye arquitectura modular en JavaScript, persistencia en Google Sheets API, validación de datos y automatización del flujo de trabajo.",
             "link": "https://github.com/EulerArturo/Sistema-de-Gesti-n-de-rdenes-pticas-Google-Apps-Script-JS-ES6-Google-Sheets-API-HTML5-CSS3"
