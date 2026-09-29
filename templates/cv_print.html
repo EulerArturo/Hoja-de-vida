@@ -178,6 +178,26 @@
                 {% endfor %}
             </div>
         </section>
+
+        <!-- Formación académica e institucional. -->
+        <section>
+            <h2 class="section-title">Educación</h2>
+            {% for edu in profile.education %}
+            <article class="experience">
+                <div class="experience-head">
+                    <h3>{{ edu.institution }} · {{ edu.degree }}</h3>
+                    <span class="period">{{ edu.period }}</span>
+                </div>
+                {% if edu.details %}
+                <ul>
+                    {% for detail in edu.details %}
+                    <li>{{ detail }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+            </article>
+            {% endfor %}
+        </section>
     </main>
 </body>
 </html>

@@ -226,6 +226,41 @@
             </div>
         </section>
 
+        <!-- Formación académica y certificaciones. -->
+        <section id="education" class="animate-block section-panel" data-scene="education">
+            <div class="section-head">
+                <p class="kicker">Educación</p>
+                <h2 class="title">Formación Académica y Estudios</h2>
+            </div>
+            
+            <div class="mt-8 grid gap-6 md:grid-cols-2">
+                {% for edu in profile.education %}
+                <article class="glass-card hover:border-cyan-500/50 transition-all duration-300 flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-start gap-2 mb-2">
+                            <h3 class="text-lg font-bold text-white">{{ edu.degree }}</h3>
+                            {% if edu.period %}
+                            <span class="text-xs text-slate-400 font-mono bg-slate-800/60 px-2.5 py-0.5 rounded border border-slate-700/50 shrink-0">{{ edu.period }}</span>
+                            {% endif %}
+                        </div>
+                        <p class="text-sm font-semibold text-cyan-300">{{ edu.institution }}</p>
+                        {% if edu.location %}
+                        <p class="text-xs text-slate-400 mt-1">{{ edu.location }}</p>
+                        {% endif %}
+
+                        {% if edu.details %}
+                        <ul class="mt-4 space-y-1.5 text-sm text-slate-300 list-disc list-inside border-t border-slate-800/80 pt-3">
+                            {% for detail in edu.details %}
+                            <li>{{ detail }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                </article>
+                {% endfor %}
+            </div>
+        </section>
+
         <!-- Contacto directo mediante formulario con envio SMTP. -->
         <section id="contact" class="animate-block section-panel pb-10" data-scene="contact">
             <div class="section-head">

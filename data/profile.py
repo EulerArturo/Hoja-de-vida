@@ -118,5 +118,46 @@ PROFILE = {
         "Implementación de módulos de captura y seguimiento de responsables, equipos y actas mediante formularios, CommCare y flujos automatizados.",
         "Creación de visor y gestor de evidencias técnicas con integración directa a Google Drive SDK y controles de integridad.",
         "Orquestación de procesos de integración y transformación de datos mediante SQL, Python, Power Automate y Azure Data Factory."
-    ]
+    ],
+    "education": [
+        {
+            "institution": "SENA (Servicio Nacional de Aprendizaje)",
+            "degree": "Tecnólogo en Gestión de Redes de Datos",
+            "period": "2023 – 2025",
+            "location": "Ipiales, Nariño, Colombia",
+            "details": [
+                "Administración y configuración de infraestructura de red Cisco, enrutamiento, VLANs y VPNs.",
+                "Mantenimiento, diagnóstico de hardware y administración de sistemas Linux / Windows Server.",
+                "Desarrollo de scripts de automatización y gestión de proyectos de conectividad e infraestructura IT."
+            ]
+        },
+        {
+            "institution": "Universidad del Norte (UNINORTE) - MisiónTIC",
+            "degree": "Programación con Énfasis en Aplicaciones Web y Móviles",
+            "period": "Mayo 2022 – Dic 2022",
+            "location": "Colombia",
+            "details": [
+                "Desarrollo full-stack y móvil utilizando Python, Java, Flask, Flutter y Dart."
+            ]
+        },
+        {
+            "institution": "SENA - Centro de Biotecnología Agropecuaria",
+            "degree": "Técnico en Programación de Software",
+            "period": "Oct 2019 – Oct 2020",
+            "location": "Mosquera, Cundinamarca, Colombia",
+            "details": [
+                "Diagramación de sistemas, HTML, CSS, JavaScript, PHP, MySQL e Inglés II."
+            ]
+        },
+        {
+            "institution": "Centro de Capacitación en Informática Integral",
+            "degree": "Técnico en Secretariado Ejecutivo Sistematizado",
+            "period": "Nov 2008 – Abr 2009",
+            "location": "Colombia",
+            "details": [
+                "Costos, operaciones contables, contabilidad comercial, constitución de empresas y gestión en Excel."
+            ]
+        },
+    ],
+    
 }
